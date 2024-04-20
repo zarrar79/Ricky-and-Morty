@@ -8,6 +8,8 @@
   return (
       <>
       <div className="pt-[0.1px] bg-[black]">
+        <div className="text-[white] flex justify-center text-[50px] font-[400] mt-3"><h1>Ricky and Morty</h1></div>
+        <div className="max-w-[1100px] mx-auto">
        <div className="flex justify-center w-[100%] items-center bg-[black] mt-10">
         {/* input */}
         <div className="rounded border-[2px] border-[solid] border-[#79c187] w-[30%]"><input className="w-[100%] py-2 px-2" type="text" placeholder="Search by status, gender or species"></input></div>
@@ -15,12 +17,12 @@
         <div className="text-[white] bg-[#6060e0] p-[9.5px]"><button>Search</button></div>
       </div>
       <div className="pt-[0.1px] bg-[black]">
-      <div className="flex flex-wrap justify-between bg-[#333232] px-2 mt-10">
+      <div className="flex flex-wrap items-center justify-between bg-[#333232] px-2 mt-10">
         {data.results.map((card:any) =>(
           // parent
           <div className="mt-4" key={card.id}>
             {/* img left */}
-            <div><img src={card.image}></img></div>
+            <div><img className="rounded-l-[5px] rounded-r-[5px]" src={card.image}></img></div>
             {/* right */}
             <div className="bg-[#3c3e44] items-center text-center pt-4 pb-4">
             {/* head */}
@@ -56,6 +58,7 @@
             </div>
           </div>
         ))}
+        </div>
         </div>
         </div>
         </div>
