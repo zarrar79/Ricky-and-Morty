@@ -18,7 +18,7 @@
       <div className="flex flex-wrap justify-between bg-[#333232] px-2 mt-10">
         {data.results.map((card:any) =>(
           // parent
-          <div className="mt-4">
+          <div className="mt-4" key={card.id}>
             {/* img left */}
             <div><img src={card.image}></img></div>
             {/* right */}
