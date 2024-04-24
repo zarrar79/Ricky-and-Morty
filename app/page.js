@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 
 export default function Page() {
-  const [data, setData] = useState(null);
+  let [data, setData] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchPram] = useState(["name"]);
-  const[display,setDisplay] = useState(null);
-  const itemsPerPage = 9;
+  let[display,setDisplay] = useState('');
+  let itemsPerPage = 9;
 
   useEffect(() => {
     const fetchData = async (url) => {
@@ -31,7 +31,7 @@ export default function Page() {
         console.error('Error fetching data:', error);
       }
     };
-  
+    
     fetchData("https://rickandmortyapi.com/api/character");
   }, []);
 
@@ -40,29 +40,25 @@ export default function Page() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const handleSearch = (e)=>{
-    if(displayData==null)
-    displayData = data;
+    if(e.value===""){
+    displayData = data.results;
+    setDisplay(displayData);
+    console.log(display,"----->empty field");
+    }
+  else{
    displayData =  search(e);
-   setDisplay(displayData);
-   //  displayD(displayData);
-    console.log(displayData,"--->display");
-  setData({...data, results: displayData})
-  console.log(data);
-
+  setDisplay(displayData);
+   }
   }
-  var displayData = data ? data.results.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage) : [];
+  let displayData = display ? display?.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage) : data?.results.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
   const search = (e) => {
+    setDisplay(data);
     return data.results.filter((item) => {
-      if (item.name === e.value) {
+      if (((item.name).toLowerCase()==(e.value).toLowerCase())) {
         return searchPram.some((newItem) => {
           return item[newItem].toString().toLowerCase().indexOf(e.value.toLowerCase()) > -1;
         });
-      } else {
-        return searchPram.some((newItem) => {
-          return item[newItem].toString().toLowerCase().indexOf(e.value.toLowerCase()) > -1;
-        });
-      }
-    });
+      }});
   };
   return (
     <>
@@ -77,7 +73,7 @@ export default function Page() {
           </div>
           <div className="pt-[0.1px] bg-[black]">
             <div className="flex flex-wrap items-center justify-between bg-[#333232] px-2 mt-10">
-              {displayData.map((card) => (
+              {displayData?.map((card) => (
                 <div className="mt-4" key={card.id}>
                   <div><img className="rounded-l-[5px] rounded-r-[5px]" src={card.image} alt={card.name} /></div>
                   <div className="bg-[#3c3e44] items-center text-center pt-4 pb-4">
@@ -109,7 +105,7 @@ export default function Page() {
               previousLabel={'Previous'}
               nextLabel={'Next'}
               breakLabel={'...'}
-              pageCount={Math.ceil(data.results.length / itemsPerPage)}
+              pageCount={!display ? Math.ceil(data.results.length / itemsPerPage):Math.ceil(display.length / itemsPerPage)}
               marginPagesDisplayed={2}
               pageRangeDisplayed={5}
               onPageChange={handlePageClick}
