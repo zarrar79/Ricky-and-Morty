@@ -8,9 +8,10 @@ import ReactPaginate from 'react-paginate';
 export default function Page() {
   let [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [searchPram] = useState(["name"]);
+  const [searchPram] = useState(["name",'gender']);
   let[display,setDisplay] = useState('');
   let[currPage,setCurrPage] = useState(1)
+  let[filter,setFilter] = useState('');
   let itemsPerPage = 9;
   useEffect(() => {
     const fetchData = async () => {
@@ -52,19 +53,40 @@ export default function Page() {
         });
       }});
   };
+  const searchBtn = (e) => {
+    return data.filter((item) => {
+      if (
+        item.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+        item.gender.toLowerCase().includes(e.target.value.toLowerCase())
+      ) {
+        return searchPram.some((newItem) =>
+          item[newItem].toString().toLowerCase().includes(e.target.value.toLowerCase())
+        );
+      }
+    });
+  };
+  
+  const handleBtn = (e) => {
+    setFilter(e.target.value);
+    if (e.target.value == "all") {
+      setCurrPage(1);
+      setCurrentPage(0);
+      setDisplay(data); // Assuming `setDisplay` is a state setter function for `displayData`
+    } else {
+      const filteredData = searchBtn(e);
+      setDisplay(filteredData); // Assuming `setDisplay` is a state setter function for `displayData`
+    }
+  };
+  
   const handleSearch = (e)=>{
     console.log(e.value , "------>e")
-    if(e.value===""){
-console.log(e.value==="" , "value---")
+    if(e.value==="all"){
+      setCurrPage(1);
+      setCurrentPage(0);
     displayData = data;
-    setCurrPage(1)
-    console.log(display,"------>empty field");
     }
   else{
    displayData =  search(e);
-   console.log(displayData,"-------->display data");
-   console.log(currentPage,"----->current page");
-   console.log(currPage,"------->page number");
   setDisplay(displayData);
    }
   }
@@ -75,9 +97,14 @@ console.log(e.value==="" , "value---")
         <div className="max-w-[1100px] mx-auto">
           <div className="flex justify-center w-[100%] items-center bg-[black] mt-10">
             <div className="rounded border-[2px] border-[solid] border-[#79c187] w-[30%]">
-              <input onChange={(e)=>{handleSearch(e.target)}} className="w-[100%] py-2 px-2" type='text' placeholder="Search by status, gender or species" />
+              <input onChange={(e)=>{handleSearch(e.target)}} className="w-[100%] py-2 px-2" type='text' placeholder="Search by name" />
             </div>
-            <div className="text-[white] bg-[#6060e0] p-[9.5px]"><button>Search</button></div>
+            <div><select onChange={(e) => handleBtn(e)} className="text-white bg-[#6060e0] p-[9.5px] ml-4 rounded">
+      <option value="all">Filter by gender</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="unknown">Unknown</option>
+    </select></div>
           </div>
           <div className="pt-[0.1px] bg-[black]">
             <div className="flex flex-wrap items-center justify-between bg-[#333232] px-2 mt-10">
