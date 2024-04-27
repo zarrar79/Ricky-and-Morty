@@ -37,7 +37,7 @@ export default function Page() {
 
           setData(allData);
           setLoading(false); // After fetching data, set loading to false
-        }, 1000); // Show loading message for 1 second
+        }, 600); // Show loading message for 1 second
 
       } catch (error) {
         console.error('Error fetching data:', error);
