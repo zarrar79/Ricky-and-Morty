@@ -7,6 +7,7 @@ import ReactPaginate from 'react-paginate';
 
 export default function Page() {
   const [data, setData] = useState([]);
+  const [currPage,setCurrPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchPram] = useState(["name", 'gender']);
   const [display, setDisplay] = useState('');
@@ -75,7 +76,6 @@ export default function Page() {
     e.preventDefault();
     return data.filter((item) => {
       if (
-        item.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
         item.gender.toLowerCase().includes(e.target.value.toLowerCase())
       ) {
         return searchPram.some((newItem) =>
