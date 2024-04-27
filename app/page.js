@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 
 export default function Page() {
+  const [loading, setLoading] = useState(true);
   let [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchPram] = useState(["name",'gender']);
@@ -14,24 +15,33 @@ export default function Page() {
   let[filter,setFilter] = useState('');
   let itemsPerPage = 9;
   useEffect(() => {
+    // Function to fetch data
     const fetchData = async () => {
       try {
-        let allData = [];
-        let nextPage = `https://rickandmortyapi.com/api/character/?page=${currentPage}`;
+        // Simulate a loading message for 1 second
+        setTimeout(async () => {
+          setLoading(true);
 
-        while (nextPage) {
-          const res = await fetch(nextPage);
-          if (!res.ok) {
-            throw new Error('Network response was not ok');
+          let allData = [];
+          let nextPage = `https://rickandmortyapi.com/api/character/?page=${currentPage}`;
+
+          while (nextPage) {
+            const res = await fetch(nextPage);
+            if (!res.ok) {
+              throw new Error('Network response was not ok');
+            }
+            const jsonData = await res.json();
+            allData = [...allData, ...jsonData.results];
+            nextPage = jsonData.info.next;
           }
-          const jsonData = await res.json();
-          allData = [...allData, ...jsonData.results];
-          nextPage = jsonData.info.next;
-        }
 
-        setData(allData);
+          setData(allData);
+          setLoading(false); // After fetching data, set loading to false
+        }, 1000); // Show loading message for 1 second
+
       } catch (error) {
         console.error('Error fetching data:', error);
+        setLoading(false); // Set loading to false in case of error
       }
     };
 
@@ -92,6 +102,7 @@ export default function Page() {
   }
   return (
     <>
+    {loading? "Loading Data......":
       <div className="pt-[0.1px] bg-[black]">
         <div className="text-[white] flex justify-center text-[50px] font-[400] mt-3"><h1>Ricky and Morty</h1></div>
         <div className="max-w-[1100px] mx-auto">
@@ -148,6 +159,7 @@ export default function Page() {
           </div>
         )}
       </div>
+      }
     </>
   );
 }
