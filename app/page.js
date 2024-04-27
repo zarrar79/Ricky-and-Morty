@@ -6,47 +6,55 @@ import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 
 export default function Page() {
-  const [loading, setLoading] = useState(true);
-  let [data, setData] = useState([]);
+  const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [searchPram] = useState(["name",'gender']);
-  let[display,setDisplay] = useState('');
-  let[currPage,setCurrPage] = useState(1)
-  let[filter,setFilter] = useState('');
-  let itemsPerPage = 9;
+  const [searchPram] = useState(["name", 'gender']);
+  const [display, setDisplay] = useState('');
+  const [filter, setFilter] = useState('');
+  const [loading, setLoading] = useState(true); // State to control loading message
+
+  const itemsPerPage = 9;
+
   useEffect(() => {
+    let fetchStartTime = Date.now(); // Record the start time of data fetching
+
     // Function to fetch data
     const fetchData = async () => {
       try {
-        // Simulate a loading message for 1 second
-        setTimeout(async () => {
-          setLoading(true);
+        let allData = [];
+        let nextPage = `https://rickandmortyapi.com/api/character/?page=${currentPage}`;
 
-          let allData = [];
-          let nextPage = `https://rickandmortyapi.com/api/character/?page=${currentPage}`;
-
-          while (nextPage) {
-            const res = await fetch(nextPage);
-            if (!res.ok) {
-              throw new Error('Network response was not ok');
-            }
-            const jsonData = await res.json();
-            allData = [...allData, ...jsonData.results];
-            nextPage = jsonData.info.next;
+        while (nextPage) {
+          const res = await fetch(nextPage);
+          if (!res.ok) {
+            throw new Error('Network response was not ok');
           }
+          const jsonData = await res.json();
+          allData = [...allData, ...jsonData.results];
+          nextPage = jsonData.info.next;
+        }
 
-          setData(allData);
-          setLoading(false); // After fetching data, set loading to false
-        }, 600); // Show loading message for 1 second
-
+        setData(allData);
+        console.log('Fetched data:', allData); // Log the fetched data
       } catch (error) {
         console.error('Error fetching data:', error);
-        setLoading(false); // Set loading to false in case of error
+      } finally {
+        let fetchEndTime = Date.now(); // Record the end time of data fetching
+        let fetchDuration = fetchEndTime - fetchStartTime; // Calculate duration of data fetching
+
+        // Show loading message if fetching duration is less than 1000 milliseconds (1 second), otherwise hide it
+        console.log('Fetch duration:', fetchDuration);
+        setLoading(fetchDuration < 1000 ? false : true);
       }
     };
 
     fetchData();
   }, [currentPage]);
+
+
+  useEffect(() => {
+    console.log('Loading state:', loading);
+  }, [loading]);
 
   let displayData = display ? display?.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage) : data?.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
@@ -64,6 +72,7 @@ export default function Page() {
       }});
   };
   const searchBtn = (e) => {
+    e.preventDefault();
     return data.filter((item) => {
       if (
         item.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
