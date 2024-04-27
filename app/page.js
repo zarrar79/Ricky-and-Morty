@@ -1,65 +1,73 @@
 'use client'
+import { all } from 'axios';
+import { Allerta_Stencil, Inclusive_Sans } from 'next/font/google';
 import PreviousMap from 'postcss/lib/previous-map';
 import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 
 export default function Page() {
-  let [data, setData] = useState(null);
+  let [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchPram] = useState(["name"]);
   let[display,setDisplay] = useState('');
+  let[currPage,setCurrPage] = useState(1)
   let itemsPerPage = 9;
-
   useEffect(() => {
-    const fetchData = async (url) => {
+    const fetchData = async () => {
       try {
-        const res = await fetch(url);
-        if (!res.ok) {
-          throw new Error('Network response was not ok');
+        let allData = [];
+        let nextPage = `https://rickandmortyapi.com/api/character/?page=${currentPage}`;
+
+        while (nextPage) {
+          const res = await fetch(nextPage);
+          if (!res.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const jsonData = await res.json();
+          allData = [...allData, ...jsonData.results];
+          nextPage = jsonData.info.next;
         }
-        const jsonData = await res.json();
-  
-        setData(prevData => ({
-          info: jsonData.info,
-          results: prevData ? [...prevData.results, ...jsonData.results] : jsonData.results
-        }));
-  
-        if (jsonData.info && jsonData.info.next) {
-          fetchData(jsonData.info.next);
-        }
+
+        setData(allData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-    
-    fetchData("https://rickandmortyapi.com/api/character");
-  }, []);
+
+    fetchData();
+  }, [currentPage]);
+
+  let displayData = display ? display?.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage) : data?.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
   const handlePageClick = ({ selected }) => {
     setCurrentPage(selected);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth'});
   };
-  const handleSearch = (e)=>{
-    if(e.value===""){
-    displayData = data.results;
-    setDisplay(displayData);
-    console.log(display,"----->empty field");
-    }
-  else{
-   displayData =  search(e);
-  setDisplay(displayData);
-   }
-  }
-  let displayData = display ? display?.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage) : data?.results.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+
   const search = (e) => {
-    setDisplay(data);
-    return data.results.filter((item) => {
-      if (((item.name).toLowerCase()==(e.value).toLowerCase())) {
+    return data.filter((item) => {
+      if (((item.name).toLowerCase().indexOf((e.value).toLowerCase()))>-1){
         return searchPram.some((newItem) => {
-          return item[newItem].toString().toLowerCase().indexOf(e.value.toLowerCase()) > -1;
+          return item[newItem].toString().toLowerCase().includes(e.value.toLowerCase());
         });
       }});
   };
+  const handleSearch = (e)=>{
+    console.log(e.value , "------>e")
+    if(e.value===""){
+console.log(e.value==="" , "value---")
+    displayData = data;
+    setCurrPage(1)
+    console.log(display,"------>empty field");
+    }
+  else{
+   displayData =  search(e);
+   console.log(displayData,"-------->display data");
+   console.log(currentPage,"----->current page");
+   console.log(currPage,"------->page number");
+  setDisplay(displayData);
+   }
+  }
   return (
     <>
       <div className="pt-[0.1px] bg-[black]">
@@ -105,7 +113,7 @@ export default function Page() {
               previousLabel={'Previous'}
               nextLabel={'Next'}
               breakLabel={'...'}
-              pageCount={!display ? Math.ceil(data.results.length / itemsPerPage):Math.ceil(display.length / itemsPerPage)}
+              pageCount={!display ? Math.ceil(data.length / itemsPerPage):Math.ceil(display.length / itemsPerPage)}
               marginPagesDisplayed={2}
               pageRangeDisplayed={5}
               onPageChange={handlePageClick}
