@@ -1,6 +1,7 @@
 'use client'
 import { all } from 'axios';
 import { Allerta_Stencil, Inclusive_Sans } from 'next/font/google';
+import Link from 'next/link';
 import PreviousMap from 'postcss/lib/previous-map';
 import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
@@ -130,6 +131,7 @@ export default function Page() {
             <div className="flex flex-wrap items-center justify-between bg-[#333232] px-2 mt-10">
               {displayData?.map((card) => (
                 <div className="mt-4" key={card.id}>
+                    <Link href={`pages/character/${card.id}`}>
                   <div><img className="rounded-l-[5px] rounded-r-[5px]" src={card.image} alt={card.name} /></div>
                   <div className="bg-[#3c3e44] items-center text-center pt-4 pb-4">
                     <div>
@@ -149,6 +151,7 @@ export default function Page() {
                       <div className="text-[white]">{card.species}</div>
                     </div>
                   </div>
+                  </Link>
                 </div>
               ))}
             </div>
