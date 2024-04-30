@@ -4,6 +4,7 @@ import React from 'react';
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ColorRing } from 'react-loader-spinner'
 
 export default function CharacterPage() {
   const param = useParams();
@@ -27,7 +28,19 @@ export default function CharacterPage() {
   });
 
   if (!character) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen bg-black">
+        <ColorRing
+visible={true}
+height="80"
+width="80"
+ariaLabel="color-ring-loading"
+wrapperStyle={{}}
+wrapperClass="color-ring-wrapper"
+colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
+/>
+      </div>
+    );
   }
 
   return (
