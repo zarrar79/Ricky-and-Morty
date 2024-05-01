@@ -16,14 +16,11 @@ export default function Page() {
   const itemsPerPage = 9;
 
   useEffect(() => {
-    let fetchStartTime = Date.now();
-
-    // Function to fetch data
     const fetchData = async () => {
       try {
         let allData = [];
         let nextPage = `https://rickandmortyapi.com/api/character/?page=${currentPage}`;
-
+  
         while (nextPage) {
           const res = await fetch(nextPage);
           if (!res.ok) {
@@ -33,23 +30,19 @@ export default function Page() {
           allData = [...allData, ...jsonData.results];
           nextPage = jsonData.info.next;
         }
-
+  
         setData(allData);
         console.log('Fetched data:', allData);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        let fetchEndTime = Date.now();
-        let fetchDuration = fetchEndTime - fetchStartTime;
-
-        // Show loading message if fetching duration is less than 1000 milliseconds (1 second), otherwise hide it
-        console.log('Fetch duration:', fetchDuration);
-        setLoading(fetchDuration < 1000 ? false : true);
+        setLoading(false); // Set loading to false after fetching data regardless of success or failure
       }
     };
-
+  
     fetchData();
   }, [currentPage]);
+  
 
 
   useEffect(() => {
