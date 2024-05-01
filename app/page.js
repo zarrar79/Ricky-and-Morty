@@ -8,7 +8,7 @@ export default function Page() {
   const [data, setData] = useState([]);
   const [currPage, setCurrPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(0);
-  const [searchPram] = useState(["name", 'gender']);
+  const [searchPram] = useState(["name", "status"]);
   const [display, setDisplay] = useState('');
   const [filter, setFilter] = useState('');
   const [loading, setLoading] = useState(true); // State to control loading message
@@ -58,7 +58,7 @@ export default function Page() {
 
   const search = (e) => {
     return data.filter((item) => {
-      if (((item.name).toLowerCase().indexOf((e.value).toLowerCase())) > -1) {
+      if (((item.status).toLowerCase().indexOf((e.value).toLowerCase())) > -1) {
         return searchPram.some((newItem) => {
           return item[newItem].toString().toLowerCase().includes(e.value.toLowerCase());
         });
@@ -69,7 +69,7 @@ export default function Page() {
     e.preventDefault();
     return data.filter((item) => {
       if (
-        item.gender.toLowerCase().includes(e.target.value.toLowerCase())
+        item.status.toLowerCase().includes(e.target.value.toLowerCase())
       ) {
         return searchPram.some((newItem) =>
           item[newItem].toString().toLowerCase().includes(e.target.value.toLowerCase())
@@ -126,9 +126,9 @@ export default function Page() {
                 <input onChange={(e) => { handleSearch(e.target) }} className="w-[100%] py-2 px-2" type='text' placeholder="Search by name" />
               </div>
               <div><select onChange={(e) => handleBtn(e)} className="text-white bg-[#6060e0] p-[9.5px] ml-4 rounded">
-                <option value="all">Filter by gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
+                <option value="all">Filter by status</option>
+                <option value="Alive">Alive</option>
+                <option value="Dead">Dead</option>
                 <option value="unknown">Unknown</option>
               </select></div>
             </div>
