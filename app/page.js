@@ -58,7 +58,7 @@ export default function Page() {
 
   const search = (e) => {
     return data.filter((item) => {
-      if (((item.status).toLowerCase().indexOf((e.value).toLowerCase())) > -1) {
+      if (((item.name).toLowerCase().indexOf((e.value).toLowerCase())) > -1) {
         return searchPram.some((newItem) => {
           return item[newItem].toString().toLowerCase().includes(e.value.toLowerCase());
         });
